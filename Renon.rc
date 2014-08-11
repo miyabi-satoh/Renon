@@ -1,0 +1,101 @@
+#include "./include/resource.h"
+#include <windows.h>
+#define IDC_STATIC -1
+
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(65001)
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// メニュー
+//
+IDR_MENU_MAIN  MENU {
+    POPUP "ゲーム(&G)" {
+        MENUITEM "タイトル画面へ戻る(&R)",  IDR_MNU_TITLE
+        MENUITEM "終了(&X)\tAlt+F4",        IDR_MNU_QUIT
+    }
+    POPUP "ジャンプ(&J)" {
+        MENUITEM "dummy",IDR_MNU_JUMP
+    }
+    POPUP "オプション(&O)" {
+        POPUP "ウィンドウ枠(&W)" {
+            MENUITEM "パターン 1(&A)",   IDR_MNU_FRAME1
+            MENUITEM "パターン 2(&A)",   IDR_MNU_FRAME2
+            MENUITEM "パターン 3(&A)",   IDR_MNU_FRAME3
+            MENUITEM "パターン 4(&A)",   IDR_MNU_FRAME4
+        }
+        MENUITEM "環境設定(&P)...", IDR_MNU_CONFIG
+    }
+    POPUP "ヘルプ(&H)" {
+        MENUITEM "バージョン情報(&A)...",   IDR_MNU_VERSION
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// アクセラレータキー
+//
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// ダイアログボックス
+//
+IDD_CONFIG DIALOGEX 0, 0, 215, 195
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "環境設定"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    GROUPBOX        """Kanon""のデータフォルダ",IDC_STATIC,6,6,204,30
+    EDITTEXT        IDC_KANON_PATH,12,18,156,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "参照",IDC_BROWSE_KANON_PATH,174,18,33,14
+
+    GROUPBOX        "フォント",IDC_STATIC,6,42,204,60
+    COMBOBOX        IDC_COMBO_FONT,12,54,192,60,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "ABCDE あいうえお 漢字",IDC_STATIC_FONTSAMPLE,12,72,192,24
+
+    GROUPBOX        "プレイヤーの名前",IDC_STATIC,6,108,204,60
+    LTEXT           "名字 :",IDC_STATIC,12,120,18,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_PLAYER_NAME1,30,120,40,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "標準",IDC_BUTTON_NAME1,72,120,29,12
+    LTEXT           "名前 :",IDC_STATIC,114,120,18,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_PLAYER_NAME2,133,120,40,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "標準",IDC_BUTTON_NAME2,174,120,29,12
+    CTEXT           "６文字まで入力できます。\n"
+                    "使えるのは、全角の漢字、ひらがな、カタカナだけです。\n"
+                    "【】「」は使えません。",
+                    IDC_STATIC,12,138,192,28
+    DEFPUSHBUTTON   "OK",IDOK,102,174,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,160,174,50,14
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 170, 80
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,7,7,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,34,7,130,45
+    LTEXT           "タイトル、およびバージョン",IDC_STATIC_VERSION,39,10,120,8
+    LTEXT           "HomePage : http://miyabi.rakusaba.jp/",IDC_STATIC,39,20,120,8
+    LTEXT           "E-m@il : miyabi.satoh@gmail.com",IDC_STATIC,39,30,120,8
+    LTEXT           "This program is FreeWare !",IDC_STATIC,39,40,120,8
+    DEFPUSHBUTTON   "OK",IDOK,60,60,50,14
+END
+///////////////////////////////////////////////////////////////////////////////
+//
+// バージョン情報
+//
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// アイコン
+//
+IDI_ICON    ICON    "res/Renon.ico"
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// マニフェスト
+//
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "manifest.xml"
+
