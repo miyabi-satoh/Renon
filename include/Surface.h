@@ -17,9 +17,6 @@
 ///
 class Surface: public mxDibSection {
 public:
-	typedef std::auto_ptr<mxSprite> SpritePtr;
-	typedef std::list<SpritePtr> Container;
-
 	/// Zオーダー
 	enum {
 		BACK		= 0,	///< 背景
@@ -32,7 +29,7 @@ public:
 	};
 
 	/// コンストラクタ
-	Surface();
+	Surface(Config *pConfig, ResourceManager &ResMgr);
 	/// デストラクタ
 	~Surface();
 
@@ -41,9 +38,11 @@ public:
 	mxSprite& GetBackSprite() { return *m_BackSprite; }
 	mxSprite& GetCharSprite() { return *m_CharSprite; }
 	TextSprite& GetTextSprite() { return *m_TextSprite; }
+	mxSprite& GetMarkSprite(UINT n) { return *m_vMarkSprite[n]; }
 	const mxSprite& GetBackSprite() const { return *m_BackSprite; }
 	const mxSprite& GetCharSprite() const { return *m_CharSprite; }
 	const TextSprite& GetTextSprite() const { return *m_TextSprite; }
+	const mxSprite& GetMarkSprite(UINT n) const { return *m_vMarkSprite[n]; }
 	double GetScale() const { return m_Scale; }
 	const mxRect& GetPaintRect() const { return m_PaintRect; }
 	const mxDibSection& GetBackup() const { return m_Backup; }
@@ -70,13 +69,12 @@ public:
 		m_Backup.bitBlt(*this, m_PaintRect);
 	}
 
-
 	/// スプライトの追加
-	static 	void InsertSprite(mxSprite *p);
+	void InsertSprite(mxSprite *p);
 	/// スプライトの削除
-	static void RemoveSprite(mxSprite *p);
+	void RemoveSprite(mxSprite *p);
 	/// スプライトリストのソート
-	static void SortSprite();
+	void SortSprite();
 
 	/// サイズの変更
 	void Resize(const mxSize &sz);
@@ -84,13 +82,13 @@ public:
 	/// 画像ファイルの読み込み
 	static void LoadFromFile(LPCTSTR lpszName, mxDibSection &dib);
 
-protected:
-	static Container List;	///< スプライトリスト
-
 private:
+	SpriteList m_List;	///< スプライトリスト
+
 	mxSprite *m_BackSprite;		///< 背景
 	mxSprite *m_CharSprite;		///< キャラクタ
 	TextSprite *m_TextSprite;	///< テキスト
+	std::vector<mxSprite*> m_vMarkSprite;	///< 改頁マーク
 	double m_Scale;				///< 拡大率
 	mxRect m_PaintRect;			///< 描画領域(拡大対応)
 

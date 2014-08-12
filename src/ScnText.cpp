@@ -19,6 +19,7 @@ ScnText::ScnText(std::wstring s, Surface *pSurface)
 {
 	m_Surface = pSurface;
 	m_Ret = Scene::Next;
+	m_MarkIndex = 0;
 
 	// 台詞の発言者を取得する
 	std::wstring::iterator it = m_Text.begin();
@@ -43,6 +44,10 @@ ScnText::ScnText(std::wstring s, Surface *pSurface)
 
 ScnText::~ScnText()
 {
+	// 改頁マークを非表示にする
+	for (UINT n = 0; n < 16; n++) {
+		m_Surface->GetMarkSprite(n).setAlpha(0);
+	}
 }
 
 int ScnText::UpdateFrame(UINT nFrameCount)
@@ -51,16 +56,22 @@ int ScnText::UpdateFrame(UINT nFrameCount)
 		m_Surface->GetTextSprite().setAlpha(0xFF);
 	}
 
-	// スプライトの統合イメージを取得する
-	mxDibSection newImage;;
-	m_Surface->CompositeAndScaling(newImage);
-
 	if (m_it != m_Text.end()) {
 		m_it++;
 	}
 	else {
-		// TODO:改頁マークを表示する
+		for (UINT n = 0; n < 16; n++) {
+			m_Surface->GetMarkSprite(n).setAlpha(0);
+		}
+		m_Surface->GetMarkSprite((m_MarkIndex / 3) % 16).setAlpha(0xFF);
+		m_MarkIndex++;
 	}
+
+	// スプライトの統合イメージを取得する
+	mxDibSection newImage;;
+	m_Surface->CompositeAndScaling(newImage);
+
+
 	std::wstring str(m_Text.begin(), m_it);
 	m_Surface->GetTextSprite().DrawString(str, newImage);
 

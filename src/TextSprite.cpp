@@ -14,7 +14,9 @@
 #include <window.hpp>
 #include <dibtransition.hpp>
 
+SpriteVector TextSprite::m_vFrameSprite;
 UINT TextSprite::m_FrameIndex = 0;
+
 const int DEFAULT_FONT_HEIGHT = 26;	///< フォントの高さ
 const int DEFAULT_FONT_WIDTH = 24;		///< フォントの幅
 const int DEFAULT_LINE_HEIGHT = 28;	///< １行の高さ
@@ -44,18 +46,19 @@ struct FramePixOp
 	}
 };
 
-void TextSprite::Resize(double scale, const mxRect &rcPaint)
+////////////////////////////////////////////////////////////////////////////////
+/// class TextSprite
+///
+TextSprite::TextSprite(Config *pConfig, mxDibSection &dibGRDAT)
+	: m_Font(), m_pt(), m_Text()
 {
-	m_FontHeight = static_cast<int>(DEFAULT_FONT_HEIGHT * scale);
-	m_FontWidth = static_cast<int>(DEFAULT_FONT_WIDTH * scale);
-	m_LineHeight = static_cast<int>(DEFAULT_LINE_HEIGHT * scale);
-	m_pt = ptDefault * scale;
+	m_Config = pConfig;
+	m_FontHeight = 0;
+	m_FontWidth = 0;
+	m_LineHeight = 0;
+	m_IndentChars = 0;
 
 	if (m_vFrameSprite.empty()) {
-		mxString strName = m_ResMgr->GetResourcePath(_T("GRDAT.PDT"));
-		mxDibSection dibGRDAT;
-		Surface::LoadFromFile(strName.c_str(), dibGRDAT);
-
 		for (int n = 0; n < 4; n++) {
 			mxSprite *p = new mxSprite();
 			p->create(mxSize(592, 112));
@@ -104,14 +107,24 @@ void TextSprite::Resize(double scale, const mxRect &rcPaint)
 	}
 }
 
+void TextSprite::Resize(double scale, const mxRect &rcPaint)
+{
+	m_FontHeight = static_cast<int>(DEFAULT_FONT_HEIGHT * scale);
+	m_FontWidth = static_cast<int>(DEFAULT_FONT_WIDTH * scale);
+	m_LineHeight = static_cast<int>(DEFAULT_LINE_HEIGHT * scale);
+	m_pt = ptDefault * scale;
+}
+
 void TextSprite::fastRender(
 		mxDibSection &dstDib,
 		const mxRect &dstRect,
 		const mxPoint &srcPoint)
 {
-	// フレームだけレンダリング
+	// フレームをレンダリング
 	mxTrans::Blt<FramePixOp> Trans;
 	Trans.doTransition(&dstDib, dstRect, m_vFrameSprite[m_FrameIndex].get(), srcPoint);
+
+	// 改頁マークをレンダリング
 }
 
 void TextSprite::DrawString(std::wstring s, mxDibSection &dib)

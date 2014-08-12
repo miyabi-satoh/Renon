@@ -19,36 +19,40 @@ const mxRect rcSnow[] = {
 int ScnSnow::m_State = ScnSnow::END;
 UINT ScnSnow::m_dwFadeTime = 0;
 
-void ScnSnow::Create(	ResourceManager &ResMgr)
+void ScnSnow::Create(	Surface *pSurface, ResourceManager &ResMgr)
 {
-	new ScnSnow(ResMgr);
+	new ScnSnow(pSurface, ResMgr);
 }
 
-ScnSnow::ScnSnow(ResourceManager &ResMgr)
+ScnSnow::ScnSnow(Surface *pSurface, ResourceManager &ResMgr)
 	: Scene(), m_vSnow()
 {
+	m_Surface = pSurface;
+
 	// 雪の画像を読み込む
 	mxDibSection dib;
 	mxString strPath = ResMgr.GetResourcePath(_T("YUKI.PDT"));
 	Surface::LoadFromFile(strPath.c_str(), dib);
 
-	SnowSprite *p;
-	for (int i = 0; i < NUM_SNOW; i++) {
-		p = new SnowSprite(Surface::OBJECT_MIN + i);
-		p->setColorKey(dib.getPixel(mxPoint(0,0)));
-		m_vSnow.push_back(p);
-		Surface::InsertSprite(p);
+	if (!dib.isEmpty()) {
+		SnowSprite *p;
+		for (int i = 0; i < NUM_SNOW; i++) {
+			p = new SnowSprite(Surface::OBJECT_MIN + i);
+			p->setColorKey(dib.getPixel(mxPoint(0,0)));
+			m_vSnow.push_back(p);
+			m_Surface->InsertSprite(p);
 
-		if (i < NUM_SNOW / 2) {
-			p->create(rcSnow[0].size());
-			dib.bitBlt(*p, p->getRect(), rcSnow[0].topLeft());
+			if (i < NUM_SNOW / 2) {
+				p->create(rcSnow[0].size());
+				dib.bitBlt(*p, p->getRect(), rcSnow[0].topLeft());
+			}
+			else {
+				p->create(rcSnow[1].size());
+				dib.bitBlt(*p, p->getRect(), rcSnow[1].topLeft());
+			}
 		}
-		else {
-			p->create(rcSnow[1].size());
-			dib.bitBlt(*p, p->getRect(), rcSnow[1].topLeft());
-		}
+		m_Surface->SortSprite();
 	}
-	Surface::SortSprite();
 }
 
 ScnSnow::~ScnSnow()
@@ -56,7 +60,7 @@ ScnSnow::~ScnSnow()
 	mxTrace(_T("ScnSnow::~ScnSnow"));
 
 	BOOST_FOREACH(SnowSprite *p, m_vSnow) {
-		Surface::RemoveSprite(p);
+		m_Surface->RemoveSprite(p);
 	}
 }
 

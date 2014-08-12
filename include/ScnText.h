@@ -34,6 +34,7 @@ private:
 	std::wstring m_Text;			///< テキスト
 	std::wstring m_CastName;		///< 発言者名
 	std::wstring::iterator m_it;	///< テキスト中の現在位置
+	UINT m_MarkIndex;				///< 改頁マークのインデックス
 };
 
 #endif /* SCNTEXT_H_ */

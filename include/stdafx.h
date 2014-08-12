@@ -15,4 +15,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <memory>
+#include <list>
+#include <vector>
+class mxSprite;
+typedef std::auto_ptr<mxSprite> SpritePtr;
+typedef std::list<SpritePtr> SpriteList;
+typedef std::vector<SpritePtr> SpriteVector;
+
 #endif /* STDAFX_H_ */

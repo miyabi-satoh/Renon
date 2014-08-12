@@ -6,7 +6,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "RenonDefs.h"
 #include "Config.h"
+
+Config::Config()
+	: mxIniFile(IniFileName), m_KanonDir(), m_FontName(),
+	  m_PlayerName1(), m_PlayerName2(), m_LastScript(), m_WindowPos()
+{
+}
 
 void Config::Load()
 {

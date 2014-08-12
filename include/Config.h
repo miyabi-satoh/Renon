@@ -8,8 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#include "RenonDefs.h"
-#include "inifile.hpp"
+#include <inifile.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// 設定クラス
@@ -17,11 +16,7 @@
 class Config : private mxIniFile {
 public:
 	/// コンストラクタ
-	Config()
-		: mxIniFile(IniFileName), m_KanonDir(), m_FontName(),
-		  m_PlayerName1(), m_PlayerName2(), m_LastScript(), m_WindowPos()
-	{
-	}
+	Config();
 	/// デストラクタ
 	~Config() {
 	}

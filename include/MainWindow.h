@@ -23,14 +23,13 @@ class MainWindow: public mxWindow {
 public:
 	/// コンストラクタ
 	MainWindow(Config *pConfig, ResourceManager *pResMgr)
-		: mxWindow(), m_vBuffer(), m_Bgm(), m_Surface()
+		: mxWindow(), m_vBuffer(), m_Bgm(), m_Surface(pConfig, *pResMgr)
 	{
 		m_Config = pConfig;
 		m_ResMgr = pResMgr;
 		m_CurPtr = NULL;
 		m_BgmLoopCount = 0;
 		m_BgmTrackNo = 0;
-
 	}
 	/// デストラクタ
 	~MainWindow() {

@@ -59,13 +59,13 @@ ScnTitle::ScnTitle(Surface *pSurface, Config *pConfig, ResourceManager &ResMgr)
 		dib.bitBlt(*p, p->getRect(), rcMenu[i].topLeft());
 
 		m_vMenuOn.push_back(p);
-		Surface::InsertSprite(p);
+		m_Surface->InsertSprite(p);
 	}
 }
 ScnTitle::~ScnTitle()
 {
 	BOOST_FOREACH(mxSprite *p, m_vMenuOn) {
-		Surface::RemoveSprite(p);
+		m_Surface->RemoveSprite(p);
 	}
 	m_Surface->GetCharSprite().destroy();
 }

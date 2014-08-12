@@ -19,17 +19,12 @@ class ResourceManager;
 class TextSprite: public mxSprite {
 public:
 	/// コンストラクタ
-	TextSprite() : m_Font(), m_pt(), m_Text() {
-		m_Config = NULL;
-		m_ResMgr = NULL;
-		m_FontHeight = 0;
-		m_FontWidth = 0;
-		m_LineHeight = 0;
-		m_IndentChars = 0;
-	}
+	TextSprite(Config *pConfig, mxDibSection &dibGRDAT);
 	/// デストラクタ
 	~TextSprite() {
 	}
+	void 	fastRender (mxDibSection &dstDib, const mxRect &dstRect, const mxPoint &srcPoint);
+
 	/// フレーム番号の変更
 	static void SetFrameIndex(UINT n) { m_FrameIndex = n; }
 
@@ -38,10 +33,7 @@ public:
 	/// @param rcPaint	描画領域
 	void Resize(double scale, const mxRect &rcPaint);
 
-	void 	fastRender (mxDibSection &dstDib, const mxRect &dstRect, const mxPoint &srcPoint);
-
-	void SetConfig(Config *pConfig) { m_Config = pConfig; }
-	void SetResourceManager(ResourceManager *pResMgr) { m_ResMgr = pResMgr; }
+	/// 2行目以降のインデント文字数を設定する
 	void SetIndentChars(int n) { m_IndentChars = n; }
 
 	/// テキストを描画する
@@ -49,7 +41,6 @@ public:
 
 private:
 	Config *m_Config;			///< 設定クラス
-	ResourceManager *m_ResMgr;	///< リソース管理クラス
 
 	mxFont m_Font;		///< フォント
 	int m_FontHeight;	///< フォントの高さ
@@ -59,11 +50,8 @@ private:
 	mxPoint m_pt;		///< 出力開始位置
 	mxString m_Text;	///< 描画するテキスト
 
-	typedef std::auto_ptr<mxSprite> SpritePtr;
-	typedef std::vector<SpritePtr> SpriteContainer;
-	SpriteContainer m_vFrameSprite;	///< フレーム(4種)
+	static SpriteVector m_vFrameSprite;	///< フレーム(4種)
 	static UINT m_FrameIndex;		///< フレーム番号(0～3)
-
 };
 
 #endif /* TEXTSPRITE_H_ */

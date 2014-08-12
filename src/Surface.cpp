@@ -7,24 +7,27 @@
 
 #include "stdafx.h"
 #include "Surface.h"
+#include "ResourceManager.h"
 #include <file.hpp>
 #include <globals.hpp>
 #include <findfile.hpp>
 #include <spi.hpp>
 
-Surface::Container Surface::List;
-
 struct SpriteSortFunctor
 {
-	bool operator()(const Surface::SpritePtr &lhs, const Surface::SpritePtr &rhs) const {
+	bool operator()(const SpritePtr &lhs, const SpritePtr &rhs) const {
 		return lhs->z() < rhs->z();
 	}
 };
 
-Surface::Surface()
+Surface::Surface(Config *pConfig, ResourceManager &ResMgr)
 	: mxDibSection(), m_PaintRect(0, 0, 640, 480), m_Backup()
 {
 	m_Scale = 1.0;
+
+	mxString strName = ResMgr.GetResourcePath(_T("GRDAT.PDT"));
+	mxDibSection dibGRDAT;
+	LoadFromFile(strName.c_str(), dibGRDAT);
 
 	m_BackSprite = new mxSprite();
 	m_BackSprite->setZ(BACK);
@@ -34,12 +37,25 @@ Surface::Surface()
 	m_CharSprite->setZ(CHARA);
 	InsertSprite(m_CharSprite);
 
-	m_TextSprite = new TextSprite();
+	m_TextSprite = new TextSprite(pConfig, dibGRDAT);
 	m_TextSprite->create(mxSize(592, 112));
 	m_TextSprite->setPos(mxPoint(22, 350));
 	m_TextSprite->setZ(Surface::FRAME);
 	m_TextSprite->setAlpha(0);
 	InsertSprite(m_TextSprite);
+
+	for (UINT n = 0; n < 16; n++) {
+		mxSprite *p = new mxSprite();
+		p->create(mxSize(16, 16));
+		p->setPos(mxPoint(589, 437));
+		p->setZ(Surface::NEXTMARK + n);
+		p->setAlpha(0);
+		dibGRDAT.bitBlt(*p, p->getRect(), mxPoint(160 + 16 * n, 8));
+		p->setColorKey(p->getPixel(mxPoint()));
+
+		m_vMarkSprite.push_back(p);
+		InsertSprite(p);
+	}
 }
 
 Surface::~Surface()
@@ -48,7 +64,7 @@ Surface::~Surface()
 
 void Surface::CompositeAndScaling(mxDibSection &dib) {
 	mxDibSection compositeDib(mxSize(640, 480));
-	BOOST_FOREACH(SpritePtr &p, List) {
+	BOOST_FOREACH(SpritePtr &p, m_List) {
 		p->render(compositeDib);
 	}
 
@@ -77,15 +93,15 @@ void Surface::EndTransition()
 }
 
 void Surface::InsertSprite(mxSprite *p) {
-	List.push_back(SpritePtr(p));
+	m_List.push_back(SpritePtr(p));
 }
 
 void Surface::RemoveSprite(mxSprite *p) {
-	Container::iterator it;
-	for (it = List.begin(); it != List.end(); it++) {
+	SpriteList::iterator it;
+	for (it = m_List.begin(); it != m_List.end(); it++) {
 		if (it->get() == p) {
 			mxTrace(_T("Remove Sprite ") << p);
-			List.erase(it);
+			m_List.erase(it);
 			break;
 		}
 	}
@@ -93,7 +109,7 @@ void Surface::RemoveSprite(mxSprite *p) {
 
 void Surface::SortSprite()
 {
-	List.sort(SpriteSortFunctor());
+	m_List.sort(SpriteSortFunctor());
 }
 
 void Surface::Resize(const mxSize &sz) {
@@ -161,6 +177,7 @@ void Surface::LoadFromFile(LPCTSTR lpszName, mxDibSection &dib)
 		mxSPI spi;
 		try {
 			spi.load(ff.getFilePath().c_str());
+			mxTrace(_T("Load Plugin:") << ff.getFileName());
 			char lpszPath[MAX_PATH + 1];
 #ifdef UNICODE
 			::WideCharToMultiByte(
@@ -198,4 +215,6 @@ void Surface::LoadFromFile(LPCTSTR lpszName, mxDibSection &dib)
 			mxTrace(e.what());
 		}
 	}
+
+	mxTrace(_T("Surface::LoadFromFile failed."));
 }

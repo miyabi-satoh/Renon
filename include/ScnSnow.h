@@ -30,7 +30,7 @@ public:
 	};
 
 	/// ファクトリーメソッド
-	static void Create(ResourceManager &ResMgr);
+	static void Create(Surface *pSurface, ResourceManager &ResMgr);
 
 	/// デストラクタ
 	~ScnSnow();
@@ -46,12 +46,13 @@ protected:
 	int 	UpdateFrame (UINT nFrameCount);
 
 private:
+	Surface *m_Surface;
 	std::vector<SnowSprite*> m_vSnow;	///< 雪の配列
 	static int m_State;				///< 状態
 	static UINT m_dwFadeTime;			///< フェードの基準時間
 
 	/// コンストラクタ
-	ScnSnow(ResourceManager &ResMgr);
+	ScnSnow(Surface *pSurface, ResourceManager &ResMgr);
 
 };
 

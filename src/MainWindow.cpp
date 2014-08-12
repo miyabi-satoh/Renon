@@ -54,7 +54,7 @@ bool MainWindow::onCommand (int id, HWND hwndCtl, UINT codeNotify)
 	switch (id) {
 	case IDR_MNU_TITLE:	// タイトル画面へ戻る
 		Scene::Clear();
-		ScnSnow::Create(*m_ResMgr);
+		ScnSnow::Create(&m_Surface, *m_ResMgr);
 		LoadSystemScript(MENU_SCN);
 		return true;
 
@@ -87,9 +87,6 @@ bool MainWindow::onCommand (int id, HWND hwndCtl, UINT codeNotify)
 
 bool MainWindow::onCreate (LRESULT *lRes, CREATESTRUCT *lpcs)
 {
-	m_Surface.GetTextSprite().SetConfig(m_Config);
-	m_Surface.GetTextSprite().SetResourceManager(m_ResMgr);
-
 	setStyle(WS_POPUPWINDOW | WS_CAPTION | WS_MINIMIZEBOX);
 	setText(AppName);
 	// メニュー設定
@@ -119,7 +116,7 @@ bool MainWindow::onCreate (LRESULT *lRes, CREATESTRUCT *lpcs)
 	// FPS用のタイマーをセットする
 	setTimer(TIMER_FPS, 10000);
 
-	ScnSnow::Create(*m_ResMgr);
+	ScnSnow::Create(&m_Surface, *m_ResMgr);
 	LoadSystemScript(BOOTSTRAP_SCN);
 
 	return true;

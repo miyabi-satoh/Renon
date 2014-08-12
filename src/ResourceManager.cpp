@@ -49,9 +49,13 @@ mxString ResourceManager::GetResourcePath(LPCTSTR lpszName)
 		vString[0] = m_CurrentStore;
 		vString[1] = mxString(lpszName);
 	}
+	// アーカイブから展開する
 
 	if (vString[0].empty()) {
 		vString[0] = m_CurrentStore;
+		if (vString[0].empty()) {
+			return mxString();
+		}
 	}
 	else {
 		SetCurrentStore(vString[0]);

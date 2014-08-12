@@ -5,6 +5,7 @@
 /// @brief	Renonアプリケーションクラス
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include "RenonApp.h"
 #include "MainWindow.h"
 #include "resource.h"
@@ -26,8 +27,6 @@ void RenonApp::initialize ()
 	// GDI+を使う
 	USE_GDIPLUS;
 
-	m_pMainWnd = new MainWindow(&m_Config, &m_ResourceManager);
-
 	// 設定を読み込む
 	m_Config.Load();
 	try {
@@ -46,6 +45,9 @@ void RenonApp::initialize ()
 		}
 
 	}
+
+	m_pMainWnd = new MainWindow(&m_Config, &m_ResourceManager);
+
 
 	// ウィンドウクラスを登録する
 	mxRegisterWndClass(

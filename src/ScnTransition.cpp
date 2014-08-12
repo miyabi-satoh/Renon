@@ -5,6 +5,7 @@
 /// @brief	画面切り替えのシーン
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include "ScnTransition.h"
 #include "RenonDefs.h"
 #include "Surface.h"
