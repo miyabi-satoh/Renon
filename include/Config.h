@@ -39,6 +39,7 @@ public:
 	LPCTSTR GetPlayerName2() const		{ return m_PlayerName2.c_str(); }
 	LPCTSTR GetLastScript() const			{ return m_LastScript.c_str(); }
 	const mxPoint& GetWindowPos() const	{ return m_WindowPos; }
+	bool IsAutoText() const				{ return m_bAutoText; }
 	//@}
 
 	/// @name 値の設定
@@ -49,6 +50,7 @@ public:
 	void SetPlayerName2(LPCTSTR lp)		{ m_PlayerName2 = lp; }
 	void SetLastScript(LPCTSTR lp)		{ m_LastScript = lp; }
 	void SetWindowPos(const mxPoint& pt)	{ m_WindowPos = pt; }
+	void SetAutoText(bool b)				{ m_bAutoText = b; }
 	//@}
 
 private:
@@ -58,6 +60,7 @@ private:
 	mxString m_PlayerName2;	///< プレイヤー名前
 	mxString m_LastScript;	///< 最後に開いたスクリプト
 	mxPoint m_WindowPos;	///< ウィンドウ位置
+	bool m_bAutoText;		///< 文章自動送り
 
 	/// 名前の検証
 	/// @param lpszName 検証する値

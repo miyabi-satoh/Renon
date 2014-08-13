@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Recollection of "Kanon" - Readme</title>
+</head>
+<body>
+    <h1>Recollection of "Kanon"</h1>
+    <h2>あの冬を、あの雪を忘れない――究極の反芻プロジェクト（笑）。</h2>
+    <ul>
+        <li><a href="#topic">はじめに</a> ... 本ソフトについての大まかな説明</li>
+        <li><a href="#install">インストール</a> ... 動作条件・インストールの仕方</li>
+        <li><a href="#uninstall">アンインストール</a> ... アンインストールの仕方</li>
+        <li><a href="#using">使い方</a> ... 念のため</li>
+        <li><a href="#config">設定</a> ... 重要です</li>
+        <li><a href="#history">履歴</a> ... 変更履歴</li>
+        <li><a href="Script.htm">スクリプトリファレンス</a> ... シナリオ記述言語の仕様</li>
+        <li><a href="#ps">最後に</a> ... 連絡先など</li>
+        <li><a href="#xxx">サケビ</a> ... 戯れ言ッス</li>
+    </ul>
+    <h3><a name="topic"></a>■はじめに■</h3>
+    <p>
+    <strong>Recollection of "Kanon"</strong> (以下、"<strong>Renon</strong>") は
+    Key より発売の Kanon のゲームデータを利用したアプリケーションです。<br/>
+    コンセプトは<strong>回想</strong>です。<br/>
+    "あのシーンをもう一度見たい"― Renon は、そんなアナタにぴったりのソフトです。
+    </p>
+    <p>
+    主な特徴は、
+    <ul>
+        <li>Susie Plug-in を利用するので、画像データをそのまま利用できる。</li>
+        <li>独自のスクリプトでシナリオを記述することにより、オリジナルストーリーも可能。</li>
+        <li><del>BGM に WAV ファイルを使用することができるので、CD を入れてなくてもOK 。</del></li>
+        <li>BGMにMP3ファイル等を使用することができるので、CDを入れてなくてもOK。</li>
+        <li>自動文章送りを実現！　まるで映画を見ているような気分になれます。</li>
+    </ul>
+    と言ったところです。
+    </p>
+    <h3><a name="install"></a>■インストール■</h3>
+    <h4>必要とする環境</h4>
+    <p>
+    ＊注：基本的に作者の開発環境以外での動作確認はしていません。
+    <ul>
+        <li><del>日本語版Windows98</del></li>
+        <li>Windows Vista Home Premium SP2で開発・動作確認</li>
+        <li><strong>Kanon 製品版</strong>がインストールされている
+        （または、必要なデータがハードディスク上にある）。</li>
+        <li>Kanon PDT ファイルを展開できるSusie Plug-in</strong>
+        （IFPDT10.SPIで動作確認）。</li>
+    </ul>
+    </p>
+    <h4>インストール方法</h4>
+    <ol>
+        <li>ダウンロードしたzipファイル(RenonXXX.zip)を、適当なフォルダに展開します。</li>
+        <li>Renon.exeと同じフォルダに Susie Plug-in をコピーします。</li>
+        <li>BGMにMP3ファイル等を使用する場合は、BGMフォルダにコピーします。<br/>
+        その際、ファイル名にはトラック番号を含めるようにしてください。
+        （02.mp3, Track02.mp3など）</li>
+    </ol>
+    <h3><a name="uninstall"></a>■アンインストール■</h3>
+    <p>
+    展開したフォルダごと削除してください。<br/>
+    （レジストリは使用していません）
+    </p>
+    <h3><a name="using"></a>■使い方■</h3>
+    <ol>
+        <li>Renon.exe を起動します。</li>
+        <li>初回起動時は「初期設定を行ってください。」のメッセージが表示されます。<br/>
+        OKボタンを押すと環境設定ダイアログが表示されるので、
+        <a href="#config">設定</a>の項目を参考にして設定を行ってください。</li>
+        <li>"Recollection of ..." のロゴが表示されたあと、タイトル画面が表示されます。
+        <table>
+            <tr>
+                <td><img src="./images/title.jpg" width="320" height="240"/></td>
+                <td>
+                    <ul>
+                        <li><strong>最初から</strong><br/>
+                        ファイル選択ダイアログが表示されるので、読み込むシナリオを選択します。</li>
+                        <li><strong>続きから</strong><br/>
+                        前回読み込んだシナリオがあれば、それを読みます。</li>
+                        <li><strong>環境設定</strong><br/>
+                        環境設定ダイアログを表示します。
+                        詳しくは<a href="#config">設定</a>の項目を参照して下さい。</li>
+                        <li><strong>おまけ</strong><br/>
+                        バージョン情報ダイアログを表示します。</li>
+                        <li><strong>終了する</strong><br/>
+                        アプリケーションを終了します。</li>
+                    </ul>
+                </td>
+            </tr>
+        </table></li>
+    </ol>
+    <p>ウィンドウメニューは直感的に分かると思うので、説明は省略します。</p>
+    <h3><a name="config"></a>■設定■</h3>
+    <table>
+        <tr>
+            <td><img src="./images/config.jpg" height="320" width="382"></td>
+            <td>
+                <ul>
+                    <li><strong>"Kanon"のデータフォルダ</strong><br/>
+                    Kanon がインストールされているフォルダを指定します。</li>
+                    <li><strong>フォント</strong><br/>
+                    文章表示に使用するフォントを指定します。</li>
+                    <li><strong>プレイヤーの名前</strong><br/>
+                    あなたの本名を入力します（任意）。</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <h4>例</h4>
+    <p>
+    C:\Key\Kanon に Kanon がインストールされている場合、以下の様なフォルダ構成になっています。
+    </p>
+<pre>C:\
+&nbsp;+ Key\
+&nbsp;&nbsp; + Kanon\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + DAT\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + PDT\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + AVG3216M.exe
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + …
+</pre>
+    <p>
+    この場合、「"Kanon"のデータフォルダ」には<strong>C:\Key\Kanon</strong> を選択します。
+    </p>
+    <h3><a name="history"></a>■履歴■</h3>
+    <p>
+    2014/07/21 Ver 2.00
+    <ul>
+        <li>ソースコードを全面的にリライト。</li>
+        <li>シナリオスクリプトの仕様を全面改訂。</li>
+        <li>バイナリをUnicode文字セットにした。</li>
+        <li>うんこVistaへの対応（通常の方法では音楽をループ再生できない）。</li>
+    </ul>
+    1999/11/29 Ver 1.02
+    <ul>
+        <li>ジャンプ機能を実装。</li>
+        <li>BGM のフェイドアウトを実装。</li>
+        <li>描画のスピードを一部変更。</li>
+    </ul>
+    1999/11/08 Ver 1.01
+    <ul>
+        <li>禁則処理を行うようにした。</li>
+    </ul>
+    1999/11/07 Ver 1.00 公開<br />
+    1999/10/26 Ver 0.00a （？）
+    <ul>
+        <li>フレーム枠の変更が出来るようにした。</li>
+        <li>自動文章送りを実装。</li>
+        <li>終了時に設定を保存するようにした。</li>
+    </ul>
+    1999/10/22 初公開。
+
+    <h3><a name="ps"></a>■最後に■</h3>
+    <h4>お約束的な一文</h4>
+    <p>
+    本ソフトはフリーソフトウェアです。<br/>
+    使用・転載・配布等に関して、特に制限はありません。<br/>
+    ただし、転載・配布などを行う場合は、アーカイブに含まれるファイルの改変等を行わないようお願いします。
+    </p>
+    <p>
+    このプログラムを使用したことにより、何らかの障害が発生しても作者は責任を負いません。<br/>
+    また、そのような障害に対するバグ修正等の義務は負いません。
+    </p>
+    <p>このプログラムについて、Key や プラグインの作者に問い合わせるようなことはしないで下さい。</p>
+    <h4>謝辞</h4>
+    <p>
+    素晴らしい作品を制作・発売して下さった Key のスタッフ様。<br/>
+    改正著作権法にも負けずプラグインを作成・公開しておられる作者様。<br/>
+    Susie の作者である"たけちん"様。<br/>
+    なにより、Renon 作成のキッカケをあたえてくれた"うまい"様。<br/>
+    </p>
+    <p>心より感謝しております。</p>
+    <h4>連絡先</h4>
+    <p>意見・感想・要望・バグレポートなど、中傷・誹謗・嫌がらせ・ボム・スパム以外は大歓迎です。</p>
+    <p>
+    ＨＰ　：　「喫茶　雅」（<a href="http://miyabi.rakusaba.jp/">http://miyabi.rakusaba.jp/</a>）<br/>
+    メール　：　<a href="mailto:miyabi.satoh@gmail.com">miyabi.satoh@gmail.com</a>
+    </p>
+    <h3><a name="xxx"></a>サケビ</h3>
+    <p>
+    ああ、疲れた。<br/>
+    うっぷん晴らしにど～でもいいことを書き殴るか…。
+    </p>
+    <p>
+    カレンダー欲しいですか？<br/>
+    一日の始まりに出てくるヤツとか、プレイ中に表示されてるヤツとか。<br/>
+    面倒なので手をつけてないんですけど。<br/>
+    要望があれば善処します。
+    </p>
+    <p>
+    Renon は 以下の環境で開発・テストされています。<br/>
+    要するに、作者のマシンスペックですな。
+    </p>
+    <table>
+        <tr>
+            <th>OS</th>
+            <td>
+                <del>Microsoft Windows98 日本語版</del><br/>
+                Microsoft Windows Vista Home Premium SP2
+            </td>
+        </tr>
+        <tr>
+            <th>CPU</th>
+            <td>
+                <del>AMD K6-2 350MHz</del><br/>
+                Intel Core2 Duo E4500 2.20GHz
+            </td>
+        </tr>
+        <tr>
+            <th>Memory</th>
+            <td><del>128MB DIMM</del><br/>2.00GB</td>
+        </tr>
+        <tr>
+            <th>Video</th>
+            <td><del>STB Velocity 128 3D AGP (Nvidia Riva 128) 4MB</del></td>
+        </tr>
+        <tr>
+            <th>Complier</th>
+            <td>
+                <del>Microsoft Visual C++ Ver 6.0 (+SP3)</del><br/>
+                Microsoft Visual C++ 2010 Express SP1
+            </td>
+        </tr>
+        <tr>
+            <th>Editer</th>
+            <td>
+                <del>xyzzy Ver 0.1.0.108</del><br/>
+                サクラエディタ Ver. 2.0.5.0<br/>
+            </td>
+        </tr>
+        <tr>
+            <th>Susie Plug-in</th>
+            <td>いのうえひろし様作成の IFPDT10.SPI Ver 1.20</td>
+        </tr>
+    </table>
+    <p>
+    本プログラムはWindows SDKとC++ … つまりMFCなどのフレームワークを一切使わず
+    純粋にWin32APIのみで記述されています。<br/>
+    無論、DirectX とか、<del>サードパーティのライブラリなんかも</del>使っていません。<br/>
+    <del>そのため外部 DLL などは一切必要ありません。</del><br/>
+    以下のサードパーティライブラリを使わせてもらってます。
+    </p>
+    <ul>
+        <li><a href="http://www.boost.org/">Boost C++ Libraries</a></li>
+        <li><a href="http://sourceforge.jp/projects/nkf/">nkf Network Kanji Filter</a></li>
+        <li><a href="http://www.zlib.net/">zlib</a></li>
+    </ul>
+    <p>
+    出来の悪い自作ライブラリを使用しているので、ソース公開は問題あるかもなぁ。</br>
+    一応、するつもりではいますけど。<br/>
+    まぁ、grep などで API の使い方を調べるぐらいの役には立つかも知れませんね。
+    </p>
+    <p>
+    名前の秘密。</br>
+    実は、 "Recollection of Kanon" は後付けで、先に Renon という名前が決まっていたんですね。</br>
+    Kanon と Renon。</br>
+    スペルの見た目が似ているのと、"Re" という接頭語が"再び"とか"もう一度"を意味するってあたりから命名。</br>
+    んで、英和辞書で Re- を探したら、"Recollection" って単語があったんで、"Recollection of Kanon" になったんです。<br/>
+    <strong>RE</strong>collectio<strong>N</strong> <strong>O</strong>f kano<strong>N</strong>？<br/>
+    <strong>R</strong>ecoll<strong>E</strong>ction of ka<strong>NON</strong>？<br/>
+    真相は闇の中です、作者にも分かりません（笑）。
+    </p>
+    <p><del>
+    MP3をサポートしたい！<br/>
+    けっこう Kanon の曲ってアレンジされて MP3 で公開されてたりするんですよね。<br/>
+    それに、初回限定版のサントラもあるし。<br/>
+    WAVで鳴らせばいいんだけど、容量とるからね～。<br/>
+    なんか「Visual C++ 6.0 で作る MP3 プレイヤー」みたいな本が出版されてるらしいけど。<br/>
+    近くの本屋には置いてなかったし、なにより金が…。<br/>
+    前にフリーのプレイヤーのソース解析して、ライブラリにしたんだけど、処理が重くて。<br/>
+    マシンパワーの上がってる今なら、さほど描画に影響しないのだろうか？<br/>
+    試してみようかな。
+    </del></p>
+    <p>
+    スクリーンセーバーにしたい！<br/>
+    いや、３日ぐらいで出来ますよ、このぐらい（笑）。<br/>
+    ただ、エラー処理の部分がね…スクリーンセーバーなのにメッセージボックス出しっぱなしじゃ意味無いし。<br/>
+    ユーザーが正しく使ってくれれば問題ないんだけどね、ReadMe 読まないで文句言う人って絶対いるだろうし。<br/>
+    とりあえず、一つシナリオ書いてからだね…あぁ、しばらくは反芻の日々か。
+    </p>
+</body>
+</html>

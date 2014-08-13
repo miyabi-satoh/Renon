@@ -9,7 +9,6 @@
 #define SCNTRANSITION_H_
 
 #include "Scene.h"
-
 class Surface;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,10 +21,11 @@ public:
 			const std::wstring type,
 			int option);
 
+	~ScnTransition() {
+	}
+
 private:
 	ScnTransition() : Scene() {
-	}
-	~ScnTransition() {
 	}
 };
 

@@ -15,16 +15,20 @@ IDR_MENU_MAIN  MENU {
         MENUITEM "終了(&X)\tAlt+F4",        IDR_MNU_QUIT
     }
     POPUP "ジャンプ(&J)" {
-        MENUITEM "dummy",IDR_MNU_JUMP
+        MENUITEM "dummy",                   IDR_MNU_JUMP
     }
     POPUP "オプション(&O)" {
         POPUP "ウィンドウ枠(&W)" {
-            MENUITEM "パターン 1(&A)",   IDR_MNU_FRAME1
-            MENUITEM "パターン 2(&A)",   IDR_MNU_FRAME2
-            MENUITEM "パターン 3(&A)",   IDR_MNU_FRAME3
-            MENUITEM "パターン 4(&A)",   IDR_MNU_FRAME4
+            MENUITEM "パターン 1(&A)",      IDR_MNU_FRAME1
+            MENUITEM "パターン 2(&A)",      IDR_MNU_FRAME2
+            MENUITEM "パターン 3(&A)",      IDR_MNU_FRAME3
+            MENUITEM "パターン 4(&A)",      IDR_MNU_FRAME4
         }
-        MENUITEM "環境設定(&P)...", IDR_MNU_CONFIG
+        MENUITEM "自動文章送り(&A)",        IDR_MNU_AUTO
+        POPUP "画面サイズ(&S)" {
+            MENUITEM "dummy",               IDR_MNU_SCREEN
+        }
+        MENUITEM "環境設定(&P)...",         IDR_MNU_CONFIG
     }
     POPUP "ヘルプ(&H)" {
         MENUITEM "バージョン情報(&A)...",   IDR_MNU_VERSION

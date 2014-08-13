@@ -9,6 +9,7 @@
 #define RENONDEFS_H_
 
 #define MainWindowClassName	_T("RenonMainWindow")
+#define MenuWindowClassName	_T("RenonMenuWindow")
 #define AppName	_T("Recollection of \"Kanon\"")
 #define AppVersion	_T("2.1.0")
 

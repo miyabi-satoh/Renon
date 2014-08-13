@@ -31,7 +31,8 @@
 #define IDR_MNU_FRAME3		40006
 #define IDR_MNU_FRAME4		40007
 #define IDR_MNU_CONFIG		40008
+#define IDR_MNU_AUTO		40009
 #define IDR_MNU_JUMP		40100
-
+#define IDR_MNU_SCREEN		40200
 
 #endif /* RESOURCE_H_ */

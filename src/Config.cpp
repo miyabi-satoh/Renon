@@ -13,6 +13,7 @@ Config::Config()
 	: mxIniFile(IniFileName), m_KanonDir(), m_FontName(),
 	  m_PlayerName1(), m_PlayerName2(), m_LastScript(), m_WindowPos()
 {
+	m_bAutoText = false;
 }
 
 void Config::Load()

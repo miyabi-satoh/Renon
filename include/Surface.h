@@ -81,6 +81,8 @@ public:
 
 	/// 画像ファイルの読み込み
 	static void LoadFromFile(LPCTSTR lpszName, mxDibSection &dib);
+	/// 描画サーフェスサイズへの拡大
+	void Scaling(mxDibSection &src, mxDibSection &dst);
 
 private:
 	SpriteList m_List;	///< スプライトリスト

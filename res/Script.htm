@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Renon Script Reference</title>
+    <style>
+        blockquote {
+            background: #E0E0E0;
+            padding: 1em;
+        }
+        span.comment {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recollection of "Kanon"</h1>
+    <strong>シナリオスクリプト　リファレンス Ver 2.00</strong>
+
+    <ul>
+        <li><a href="#topic">はじめに</a> ... このファイルの概要</li>
+        <li><a href="#comment">コメント</a> ... コメントの記述について</li>
+        <li><a href="#text">テキスト関係</a> ... 文章やウィンドウタイトルについて</li>
+        <li><a href="#draw">描画関係</a> ... 背景やキャラクタの描画について</li>
+        <li><a href="#sound">サウンド関係</a> ... BGMやSEの再生・停止について</li>
+        <li><a href="#etc">その他</a> ... ディレイ、ジャンプについて</li>
+    </ul>
+
+    <h2><a name="topic"></a>■はじめに■</h2>
+    <p>
+    このファイルは Renon のシナリオ記述スクリプトのリファレンスです。
+    </p>
+    <p>
+    Renon は独自に定義されたスクリプトを用いてシナリオを記述し、それを実行します。<br/>
+    そのため、Kanon の再現だけでなく、完全なオリジナルストーリーを作ることもできます。
+    </p>
+    <p>
+    <del>割と HTML に近い仕様になっているので、なじみやすいかと思います。</del><br/>
+    改訂にあたり、当初はMarkdown記法に近い仕様を目指したのですが、まったく異質のものになりました。<br/>
+    基本的には、<strong>命令 オプション</strong>の形式で、一行一命令です。<br/>
+    なお、命令やオプションは<strong>大文字・小文字が区別される</strong>ので注意してください。
+    </p>
+
+    <h2><a name="comment"></a>■コメント■</h2>
+    <h3>一行コメント</h3>
+    <p>
+    <strong>//</strong>から行末まではコメントになります。
+    </p>
+    <blockquote>
+        これは表示される文章です。<span class="comment">// この部分はコメントです。</span>
+    </blockquote>
+    <h3>範囲コメント</h3>
+    <p>
+    <strong>/*</strong>から<strong>*/</strong>まではコメントになります。
+    </p>
+    <blockquote>
+        これは表示される文章です。<br/>
+        <span class="comment">/*<br/>
+            この部分はコメントです。<br/>
+        */</span>ここも表示される文章です。
+    </blockquote>
+
+    <h2><a name="text"></a>■テキスト関係■</h2>
+    <h3>文章表示</h3>
+    <p>命令、コメント以外のテキストは、すべて文章として表示されます。<br/>
+    文章内の<strong>相沢</strong>および<strong>祐一</strong>は、プレイヤーの環境設定に応じて置換されます。
+    </p>
+    <p>
+    テキスト一行分を表示すると、プレイヤーのクリック待ちになります。<br/>
+    テキスト表示エリア内での改行は自動で行われます。<br/>
+    強制的に改行する場合は<strong>\</strong>を使います。
+    </p>
+    <blockquote>
+        円記号を見つけると\そこで改行します。<br/>
+        　↓<br/>
+        円記号を見つけると<br/>
+        そこで改行します。
+    </blockquote>
+    <h3>セリフ表示</h3>
+    <p>
+    発言者を<strong>[]</strong>で囲むと、発言者の名前分がインデントされて表示されます。
+    </p>
+    <blockquote>
+        [シュトロハイム]「我がナチスの科学力はァァァァァァァァアアア世界一ィィィイイイイ!」<br/>
+        　↓<br/>
+        シュトロハイム「我がナチスの科学力はァァァァ<br/>
+        　　　　　　　　ァァァァアアア世界一ィィィイ<br/>
+        　　　　　　　　イイイ!」
+    </blockquote>
+    <h3>ウィンドウタイトルの変更</h3>
+    <p>
+    一つ以上の<strong>=</strong>で始まる行で、ウィンドウタイトルを変更できます。
+    <p>
+    <blockquote>
+        ===== プロローグ<br/>
+        　↓<br/>
+        Recollection of "Kanon" - プロローグ
+    </blockquote>
+
+    <h2><a name="draw"></a>描画関係（＠命令と！命令）</h2>
+    <h3>背景画像を読み込む</h3>
+    <p><strong>@B ファイル名</strong>とします。</p>
+    <blockquote>
+        @B SIRO.PDT<br/>
+        　→ KanonのデータフォルダからSIRO.PDTを読み込む。<br/>
+        @B /background.png<br/>
+        　→ スクリプトファイルと同じフォルダにあるbackground.pngを読み込む。
+    </blockquote>
+    <h3>背景画像を読み込んで描画する</h3>
+    <p><strong>@B ファイル名 トランジションコード 処理時間(ミリ秒)</strong>とします。<br/>
+    トランジションコードについては、後述の「<a href="#trans">画像を描画する</a>」を参照してください。<br/>
+    処理時間は省略可能です。
+    </p>
+    <blockquote>
+        @B SIRO.PDT DT<br/>
+        　→ SIRO.PDTを読み込んで、Dot Tileパターンで描画する。<br/>
+        @B KURO.PDT FI 1000<br/>
+        　→ KURO.PDTを読み込んで、1000ミリ秒(1秒)でFade Inする。
+    </blockquote>
+    <h3>キャラクタ画像を読み込む</h3>
+    <p><strong>@C ファイル名</strong>とします。<br/>
+    背景と異なり、<strong>画像の(0,0)の色を透過色として扱います。</strong></p>
+    <blockquote>
+        @C CGAM11.PDT<br/>
+        　→ KanonのデータフォルダからCGAM11.PDTを読み込む。<br/>
+        @C /chara.png<br/>
+        　→ スクリプトファイルと同じフォルダにあるchara.pngを読み込む。
+    </blockquote>
+    <h3>キャラクタ画像を読み込んで描画する</h3>
+    <p><strong>@C ファイル名 トランジションコード 処理時間(ミリ秒)</strong>とします。<br/>
+    トランジションコードについては、後述の「<a href="#trans">画像を描画する</a>」を参照してください。<br/>
+    処理時間は省略可能です。
+    </p>
+    <blockquote>
+        @C CGAM11.PDT DT<br/>
+        　→ CGAM11.PDTを読み込んで、Dot Tileパターンで描画する。
+    </blockquote>
+    <h3>キャラクタを画面から消す</h3>
+    <p>以下のように記述します。</p>
+    <blockquote>
+        @C　　　<span class="comment">// キャラクタ画像をクリアして、背景のみにします。</span><br/>
+        !DT　　<span class="comment">// 背景のみをDot Tileパターンで描画します。</span>
+    </blockquote>
+    <h3><a name="trans"></a>画像を描画する</h3>
+    <p><strong>!トランジションコード 処理時間(ミリ秒)</strong>とします。<br/>
+    読み込んだ背景画像＋キャラクタ画像が、トランジションコードで指定された切替効果で表示されます。<br/>
+    処理時間は省略可能です。
+    </p>
+    <blockquote>
+        !DT　　　<span class="comment">// Dot Tileパターン</span><br/>
+        !FI 1000　<span class="comment">// Fade Inパターン</span><br/>
+        !AT　　　<span class="comment">// Accordion Topパターン</span><br/>
+        !AL　　　<span class="comment">// Accordion Leftパターン</span>
+    </blockquote>
+    <h2><a name="sound"></a>サウンド関係（＃命令と＄命令）</h2>
+    <h3>BGMを再生する(ループ)</h3>
+    <p>
+    <strong>#トラック番号</strong>とします。<br/>
+    </p>
+    <blockquote>
+        #10
+    </blockquote>
+    <h3>BGMを再生する(回数指定)</h3>
+    <p>
+    <strong>#</strong>を<strong>再生したい回数+1個</strong>記述後、トラック番号を指定します。
+    </p>
+    <blockquote>
+        ##10　　<span class="comment">// トラック10を1回だけ再生します。
+    </blockquote>
+    <h3>BGMを停止する(フェードあり)</h3>
+    <p><strong>#</strong>のみを記述します。</p>
+    <blockquote>
+        #
+    </blockquote>
+    <h3>BGMを停止する(フェードなし)</h3>
+    <p><strong>##</strong>のみを記述します。</p>
+    <blockquote>
+        ##
+    </blockquote>
+    <h3>SE(効果音)を再生する</h3>
+    <p><strong>$ファイル名</strong>とします。<br/>
+    なお、SEについては停止命令はありません。</p>
+    <blockquote>
+        $CHAIMU.WAV<br/>
+        　→ KanonのデータフォルダからCHAIMU.WAVを読み込んで再生する。<br/>
+        $/shower.mp3<br/>
+        　→ スクリプトファイルと同じフォルダにあるshower.mp3を読み込んで再生する。
+    </blockquote>
+    <h2><a name="etc"></a>■その他（ディレイ、ジャンプ）</h2>
+    <h3>ディレイ(待ち時間)をかける</h3>
+    <p><strong>&lt;待ち時間(ミリ秒)</strong>とします。</p>
+    <blockquote>
+        &lt;1000
+    </blockquote>
+    <h3>ジャンプ位置の定義</h3>
+    <p>一つ以上の<strong>-</strong>で始まる行で、ジャンプ位置を定義します。<br/>
+    ジャンプ位置はウィンドウメニューに表示されます。
+    </p>
+    <blockquote>
+        ----- プロローグ
+    </blockquote>
+</body>
+</html>

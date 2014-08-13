@@ -68,14 +68,7 @@ void Surface::CompositeAndScaling(mxDibSection &dib) {
 		p->render(compositeDib);
 	}
 
-	cv::Mat mSrc(compositeDib.height(), compositeDib.width(), CV_8UC4);
-	::CopyMemory(mSrc.data, compositeDib.bits(), compositeDib.getSizeImage());
-
-	cv::Mat mDst(m_PaintRect.height(), m_PaintRect.width(), CV_8UC4);
-	cv::resize(mSrc, mDst, mDst.size());
-
-	dib.create(m_PaintRect.size());
-	::CopyMemory(dib.bits(), mDst.data, dib.getSizeImage());
+	Scaling(compositeDib, dib);
 }
 
 void Surface::EndTransition()
@@ -83,13 +76,15 @@ void Surface::EndTransition()
 	mxDibSection compositeDib(mxSize(640, 480));
 	m_BackSprite->render(compositeDib);
 	m_CharSprite->render(compositeDib);
-
+/*
 	cv::Mat mSrc(compositeDib.height(), compositeDib.width(), CV_8UC4);
 	::CopyMemory(mSrc.data, compositeDib.bits(), compositeDib.getSizeImage());
 
 	cv::Mat mDst(m_Backup.height(), m_Backup.width(), CV_8UC4);
 	cv::resize(mSrc, mDst, mDst.size());
 	::CopyMemory(m_Backup.bits(), mDst.data, m_Backup.getSizeImage());
+*/
+	Scaling(compositeDib, m_Backup);
 }
 
 void Surface::InsertSprite(mxSprite *p) {
@@ -127,10 +122,11 @@ void Surface::Resize(const mxSize &sz) {
 	this->create(sz);
 
 	// バックアップをリサイズ
-	if (m_Backup.bits() == NULL) {
+	if (m_Backup.isEmpty()) {
 		m_Backup.create(sz);
 	}
 	else {
+		/*
 		cv::Mat mSrc(m_Backup.height(), m_Backup.width(), CV_8UC4);
 		::CopyMemory(mSrc.data, m_Backup.bits(), m_Backup.getSizeImage());
 
@@ -139,13 +135,11 @@ void Surface::Resize(const mxSize &sz) {
 
 		m_Backup.create(m_PaintRect.size());
 		::CopyMemory(m_Backup.bits(), mDst.data, m_Backup.getSizeImage());
+		*/
+		Scaling(m_Backup, m_Backup);
 	}
 	// テキストをリサイズ
 	m_TextSprite->Resize(m_Scale, m_PaintRect);
-
-	// TODO:スプライトを再描画?
-	// TODO:テキストを再描画?
-
 }
 
 void Surface::LoadFromFile(LPCTSTR lpszName, mxDibSection &dib)
@@ -177,7 +171,6 @@ void Surface::LoadFromFile(LPCTSTR lpszName, mxDibSection &dib)
 		mxSPI spi;
 		try {
 			spi.load(ff.getFilePath().c_str());
-			mxTrace(_T("Load Plugin:") << ff.getFileName());
 			char lpszPath[MAX_PATH + 1];
 #ifdef UNICODE
 			::WideCharToMultiByte(
@@ -218,3 +211,16 @@ void Surface::LoadFromFile(LPCTSTR lpszName, mxDibSection &dib)
 
 	mxTrace(_T("Surface::LoadFromFile failed."));
 }
+
+void Surface::Scaling(mxDibSection &src, mxDibSection &dst)
+{
+	cv::Mat mSrc(src.height(), src.width(), CV_8UC4);
+	::CopyMemory(mSrc.data, src.bits(), src.getSizeImage());
+
+	cv::Mat mDst(m_PaintRect.height(), m_PaintRect.width(), CV_8UC4);
+	cv::resize(mSrc, mDst, mDst.size());
+
+	dst.create(m_PaintRect.size());
+	::CopyMemory(dst.bits(), mDst.data, dst.getSizeImage());
+}
+

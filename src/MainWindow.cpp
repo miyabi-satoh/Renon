@@ -17,8 +17,8 @@
 #include "ScnSnow.h"
 #include "ScnTitle.h"
 #include "ScnText.h"
+#include "ScnSpecial.h"
 #include "TextSprite.h"
-#include <menu.hpp>
 #include <dc.hpp>
 #include <file.hpp>
 #include <findfile.hpp>
@@ -51,6 +51,31 @@ bool MainWindow::handleMessage (
 
 bool MainWindow::onCommand (int id, HWND hwndCtl, UINT codeNotify)
 {
+	if (id >= IDR_MNU_SCREEN) {
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(MENUITEMINFO);
+		mii.fMask = MIIM_DATA;
+		m_mainMenu.getItemInfo(&mii, id);
+		if (mii.dwItemData != 0) {
+			m_mainMenu.checkRadioItem(IDR_MNU_SCREEN, IDR_MNU_SCREEN + 100, id);
+			ChangeWindowSize(mxSize(mii.dwItemData));
+			return true;
+		}
+	}
+	else if (id >= IDR_MNU_JUMP) {
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(MENUITEMINFO);
+		mii.fMask = MIIM_DATA;
+		m_mainMenu.getItemInfo(&mii, id);
+		if (mii.dwItemData != 0) {
+			Scene::Clear();
+			ScnSnow::Create(&m_Surface, *m_ResMgr);
+			m_Surface.GetCharSprite().destroy();
+			m_CurPtr = reinterpret_cast<WCHAR*>(mii.dwItemData);
+			return true;
+		}
+	}
+
 	switch (id) {
 	case IDR_MNU_TITLE:	// タイトル画面へ戻る
 		Scene::Clear();
@@ -66,9 +91,24 @@ bool MainWindow::onCommand (int id, HWND hwndCtl, UINT codeNotify)
 	case IDR_MNU_FRAME2:	// ウィンドウ枠 パターン2
 	case IDR_MNU_FRAME3:	// ウィンドウ枠 パターン3
 	case IDR_MNU_FRAME4: {	// ウィンドウ枠 パターン4
-		mxMenu mainMenu(getMenu());
-		mainMenu.checkRadioItem(IDR_MNU_FRAME1, IDR_MNU_FRAME4, id);
+		m_mainMenu.checkRadioItem(IDR_MNU_FRAME1, IDR_MNU_FRAME4, id);
 		TextSprite::SetFrameIndex(id - IDR_MNU_FRAME1);
+		return true; }
+
+	case IDR_MNU_AUTO: {
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(MENUITEMINFO);
+		mii.fMask = MIIM_STATE;
+		m_mainMenu.getItemInfo(&mii, id);
+		if ((mii.fState & MFS_CHECKED) == MFS_CHECKED) {
+			mii.fState = MFS_UNCHECKED;
+			m_Config->SetAutoText(false);
+		}
+		else {
+			mii.fState = MFS_CHECKED;
+			m_Config->SetAutoText(true);
+		}
+		m_mainMenu.setItemInfo(&mii, id);
 		return true; }
 
 	case IDR_MNU_CONFIG: {	// 環境設定
@@ -87,29 +127,56 @@ bool MainWindow::onCommand (int id, HWND hwndCtl, UINT codeNotify)
 
 bool MainWindow::onCreate (LRESULT *lRes, CREATESTRUCT *lpcs)
 {
-	setStyle(WS_POPUPWINDOW | WS_CAPTION | WS_MINIMIZEBOX);
 	setText(AppName);
+
 	// メニュー設定
-	mxMenu mainMenu(mxLoadMenu(IDR_MENU_MAIN));
+	m_mainMenu = mxLoadMenu(IDR_MENU_MAIN);
 	// 「タイトル画面へ戻る」はスクリプトを読むまで使用不可にする
-	mainMenu.enableItem(IDR_MNU_TITLE, MF_GRAYED, MF_BYCOMMAND);
-	setMenu(mainMenu);
-
-	// ウィンドウのサイズを計算する
-	mxRect rc(0, 0, 640, 480);
-//	mxRect rc(0, 0, 940, 680);
-	adjustWindowRect(&rc);
-
-	// ウィンドウの位置を計算する
-	mxPoint pt(m_Config->GetWindowPos());
-	if (pt.x == CW_USEDEFAULT || pt.y == CW_USEDEFAULT) {
-		mxRect rcDesktop;
-		::SystemParametersInfo(SPI_GETWORKAREA, 0, &rcDesktop, 0);
-		pt.x = (rcDesktop.right - rc.width()) / 2;
-		pt.y = (rcDesktop.bottom - rc.height()) / 2;
+	m_mainMenu.enableItem(IDR_MNU_TITLE, MF_GRAYED, MF_BYCOMMAND);
+	// 画面サイズ
+	mxMenu subMenu(m_mainMenu.getSubMenu(2));
+	mxMenu subsubMenu(subMenu.getSubMenu(2));
+	while (subsubMenu.getItemCount()) {
+		subsubMenu.deleteItem(0, MF_BYPOSITION);
+	}
+	mxZero<MENUITEMINFO> mii;
+	mii->cbSize = sizeof(MENUITEMINFO);
+	mii->fMask = MIIM_ID | MIIM_STRING | MIIM_DATA;
+	DEVMODE devMode;
+	int count = 0;
+	TCHAR szText[256];
+	DWORD prevMode = 0;
+	for (UINT n = 0; ::EnumDisplaySettings(NULL, n, &devMode); n++) {
+		mii->dwItemData = MAKELONG(devMode.dmPelsWidth, devMode.dmPelsHeight);
+		if (mii->dwItemData != prevMode) {
+			prevMode = mii->dwItemData;
+			::_stprintf(szText, _T("%dx%d(&%d)"), devMode.dmPelsWidth, devMode.dmPelsHeight, count + 1);
+			mii->wID = IDR_MNU_SCREEN + count;
+			mii->dwTypeData = szText;
+			subsubMenu.insertItem(count++, mii.get(), MF_BYPOSITION);
+		}
 	}
 
-	move(pt, rc.size(), FALSE);
+	// メニューウィンドウを作成する
+	mxRegisterWndClass(
+			MenuWindowClassName,
+			mxLoadIcon(IDI_ICON));
+	m_MenuWnd.create(
+			MenuWindowClassName,
+			NULL,
+			WS_POPUP,
+			WS_EX_TOPMOST,
+			0, 0, 0, 0,
+			this);
+	mxRect rc;
+	rc.right = ::GetSystemMetrics(SM_CXSCREEN);
+	m_MenuWnd.setMenu(m_mainMenu);
+	m_MenuWnd.adjustWindowRect(&rc);
+	m_MenuWnd.move(mxPoint(), rc.size(), FALSE);
+	m_MenuWnd.setMenu(NULL);
+
+	sendMessage(WM_COMMAND, IDR_MNU_SCREEN);
+	sendMessage(WM_COMMAND, IDR_MNU_FRAME1);
 
 	// BGMリプレイ用のタイマーをセットする
 	setTimer(TIMER_REPLAY, 1000);
@@ -155,6 +222,18 @@ bool MainWindow::onLButtonDown (BOOL fDoubleClick, const mxPoint &pt, UINT keyFl
 
 bool MainWindow::onMouseMove (const mxPoint &pt, UINT keyFlags)
 {
+	if (m_bFullScreen) {
+		mxRect rc(m_MenuWnd.getRect());
+		if (::PtInRect(&rc, pt)) {
+			m_MenuWnd.show(SW_SHOW);
+		}
+		else {
+			m_MenuWnd.show(SW_HIDE);
+		}
+	}
+	else {
+		m_MenuWnd.show(SW_HIDE);
+	}
 	Scene::OnMouseMove(this, pt, keyFlags);
 	return true;
 }
@@ -171,10 +250,18 @@ bool MainWindow::onPaint (mxPaintDC *pDC)
 
 bool MainWindow::onSize (UINT state, const mxSize &sz)
 {
+	if (state == SIZE_MINIMIZED) {
+		return false;
+	}
+
+	mxTrace(_T("onSize:") << sz.cx << _T(",") << sz.cy);
+
 	if (m_Surface.getSize() != sz) {
 		m_Surface.Resize(sz);
 		Scene::OnSize(this, state, sz);
 	}
+
+	mxTrace(_T("End onSize"));
 	return true;
 }
 
@@ -247,10 +334,53 @@ bool MainWindow::onLoadScript(BOOL bSystem, LPCTSTR lpszName)
 		LoadScript(lpszName);
 		m_Config->SetLastScript(lpszName);
 		m_Config->Save();
-		mxMenu mainMenu(getMenu());
-		mainMenu.enableItem(IDR_MNU_TITLE, MF_ENABLED, MF_BYCOMMAND);
+		m_mainMenu.enableItem(IDR_MNU_TITLE, MF_ENABLED, MF_BYCOMMAND);
+		drawMenuBar();
 	}
 	return true;
+}
+
+void MainWindow::ChangeWindowSize(const mxSize &sz)
+{
+	mxTrace(_T("ChangeWindowSize:") << sz.cx << _T(",") << sz.cy);
+
+	// ウィンドウのサイズを計算する
+	mxRect rc(mxPoint(), sz);
+	setStyle(WS_POPUPWINDOW | WS_CAPTION | WS_MINIMIZEBOX);
+	setMenu(m_mainMenu);
+	adjustWindowRect(&rc);
+
+	// 現在の画面サイズを取得する
+	int cxScreen = ::GetSystemMetrics(SM_CXSCREEN);
+	int cyScreen = ::GetSystemMetrics(SM_CYSCREEN);
+
+	mxPoint pt(m_Config->GetWindowPos());
+	// ウィンドウサイズが画面サイズ以上であればフルスクリーン化する
+	if (rc.width() >= cxScreen || rc.height() >= cyScreen) {
+		setStyle(WS_POPUP | WS_OVERLAPPED);
+		setMenu(NULL);
+		rc = mxRect(0, 0, cxScreen, cyScreen);
+		pt = mxPoint();
+		m_bFullScreen = true;
+		m_MenuWnd.setMenu(m_mainMenu);
+	}
+	else {
+		m_bFullScreen = false;
+		m_MenuWnd.setMenu(NULL);
+		// ウィンドウの位置を計算する
+		if (pt.x == CW_USEDEFAULT || pt.y == CW_USEDEFAULT) {
+			mxRect rcDesktop;
+			::SystemParametersInfo(SPI_GETWORKAREA, 0, &rcDesktop, 0);
+			pt.x = (rcDesktop.right - rc.width()) / 2;
+			pt.y = (rcDesktop.bottom - rc.height()) / 2;
+		}
+	}
+	move(pt, rc.size(), TRUE);
+	show(SW_SHOW);
+	update();
+
+	m_MenuWnd.show(SW_HIDE);
+	m_MenuWnd.update();
 }
 
 void MainWindow::LoadScript(LPCTSTR lpszName)
@@ -332,8 +462,7 @@ void MainWindow::LoadScript(LPCTSTR lpszName)
 	}
 
 	// セクション(-----)を見つけて、ジャンプメニューを初期化する
-	mxMenu mainMenu(getMenu());
-	mxMenu subMenu(mainMenu.getSubMenu(1));
+	mxMenu subMenu(m_mainMenu.getSubMenu(1));
 
 	int menuPos = 0;
 	// すでにあるメニュー項目を削除する
@@ -370,7 +499,7 @@ void MainWindow::LoadScript(LPCTSTR lpszName)
 	}
 
 	UINT uEnable = (menuPos == 0) ? MF_GRAYED : MF_ENABLED;
-	mainMenu.enableItem(1, uEnable, MF_BYPOSITION);
+	m_mainMenu.enableItem(1, uEnable, MF_BYPOSITION);
 	drawMenuBar();
 }
 
@@ -380,8 +509,7 @@ void MainWindow::LoadSystemScript(LPCTSTR lpszName)
 			mxPathCombine(mxGetSelfFolderPath().c_str(), SYSTEM_DAT));
 	LoadScript(lpszName);
 	// 「タイトル画面へ戻る」はスクリプトを読むまで使用不可にする
-	mxMenu mainMenu(getMenu());
-	mainMenu.enableItem(IDR_MNU_TITLE, MF_GRAYED, MF_BYCOMMAND);
+	m_mainMenu.enableItem(IDR_MNU_TITLE, MF_GRAYED, MF_BYCOMMAND);
 	drawMenuBar();
 }
 
@@ -487,7 +615,6 @@ void MainWindow::ParseNextLine()
 					m_Surface.GetBackSprite().destroy();
 				}
 				else {
-//					mxTrace(_T("Load background"));
 					m_Surface.GetBackSprite().setAlpha(0xFF);
 					m_Surface.LoadBackground(strFile.c_str());
 				}
@@ -500,7 +627,6 @@ void MainWindow::ParseNextLine()
 					m_Surface.GetCharSprite().destroy();
 				}
 				else {
-//					mxTrace(_T("Load character"));
 					m_Surface.GetCharSprite().setAlpha(0xFF);
 					m_Surface.LoadCharacter(strFile.c_str());
 				}
@@ -509,6 +635,7 @@ void MainWindow::ParseNextLine()
 				m_CurPtr++;
 				std::wstring strID = ParseNextString();
 				if (strID.length() > 0) {
+					ScnSpecial::Create(strID, &m_Surface, *m_ResMgr);
 //					m_SceneList.push_back(ScenePtr(new ScnSpecial(strID.c_str())));
 					// 次回のために次の行頭へ
 					m_CurPtr = pEol + 1;
@@ -571,8 +698,7 @@ void MainWindow::ParseNextLine()
 				boost::algorithm::replace_all(str, DefaultPlayerName1, m_Config->GetPlayerName1());
 				boost::algorithm::replace_all(str, DefaultPlayerName2, m_Config->GetPlayerName2());
 
-				ScnText::Create(str, &m_Surface);
-//				m_SceneList.push_back(ScenePtr(new ScnText(str.c_str())));
+				ScnText::Create(str, &m_Surface, m_Config);
 				// 次回のために次の行頭へ
 				m_CurPtr = pEol + 1;
 				return;

@@ -9,10 +9,11 @@
 #define MAINWINDOW_H_
 
 #include <window.hpp>
+#include <menu.hpp>
 #include <mci.hpp>
 #include "Scene.h"
 #include "Surface.h"
-
+#include "MenuWindow.h"
 class Config;
 class ResourceManager;
 
@@ -23,8 +24,9 @@ class MainWindow: public mxWindow {
 public:
 	/// コンストラクタ
 	MainWindow(Config *pConfig, ResourceManager *pResMgr)
-		: mxWindow(), m_vBuffer(), m_Bgm(), m_Surface(pConfig, *pResMgr)
+		: mxWindow(), m_mainMenu(), m_MenuWnd(), m_vBuffer(), m_Bgm(), m_Surface(pConfig, *pResMgr)
 	{
+		m_bFullScreen = false;
 		m_Config = pConfig;
 		m_ResMgr = pResMgr;
 		m_CurPtr = NULL;
@@ -57,7 +59,14 @@ protected:
 	//@}
 
 private:
-	Config *m_Config;					///< 設定管理クラス
+	/// ウィンドウサイズの変更
+	void ChangeWindowSize(const mxSize &sz);
+
+	mxMenu m_mainMenu;
+	MenuWindow m_MenuWnd;
+	bool m_bFullScreen;
+
+	Config *m_Config;			///< 設定管理クラス
 	ResourceManager *m_ResMgr;	///< リソース管理クラス
 
 	// スクリプト関係 //////////////////////////////////////////////////////////

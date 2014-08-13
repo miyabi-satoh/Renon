@@ -10,13 +10,14 @@
 
 #include <Scene.h>
 class Surface;
+class Config;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// テキスト描画のシーン
 ///
 class ScnText: public Scene {
 public:
-	static void Create(std::wstring s, Surface *pSurface);
+	static void Create(std::wstring s, Surface *pSurface, Config *pConfig);
 
 	~ScnText();
 
@@ -25,8 +26,9 @@ protected:
 	void 	onLButtonDown (mxWindow *pWnd, BOOL fDoubleClick, const mxPoint &pt, UINT keyFlags);
 
 private:
-	ScnText(std::wstring s, Surface *pSurface);
+	ScnText(std::wstring s, Surface *pSurface, Config *pConfig);
 
+	Config *m_Config;	///< 設定管理クラス
 	Surface *m_Surface;	///< 描画サーフェス
 
 	int m_Ret;	///< UpdateFrameの戻り値
